@@ -1,4 +1,4 @@
-namespace DevFlix.Api
+namespace DevFlix
 {
     public class WeatherForecast
     {
