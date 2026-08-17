@@ -6,11 +6,20 @@ This document defines the global instructions for AI agents working on the DevFl
 
 # Repository Rules
 
-- This repository is the only repository the agent may interact with.
-- When using the GitHub MCP server, always assume the target repository is **DevFlix**.
-- Never inspect, list, modify, or access other repositories unless explicitly requested by the user.
-- Never create Issues, Pull Requests, Projects, or Releases outside this repository.
-- If a GitHub operation could affect another repository, stop and ask for confirmation.
+Known repository:
+
+- Owner: `Ferchax`
+- Repository: `DevFlix`
+
+This repository is the only repository the agent may interact with.
+
+Always assume the target repository is `Ferchax/DevFlix` unless the user explicitly instructs otherwise.
+
+Never inspect, list, modify, or access other repositories unless explicitly requested.
+
+Never create Issues, Pull Requests, Projects, or Releases outside this repository.
+
+Do not search for repositories to discover the correct target unless an operation against the known repository fails.
 
 ---
 
@@ -19,15 +28,60 @@ This document defines the global instructions for AI agents working on the DevFl
 GitHub Projects is the single source of truth for planning and task tracking.
 
 Always prefer:
+
 - GitHub Projects
 - GitHub Issues
 - Milestones (if used)
 
 Guidelines:
+
 - All development work should start from a GitHub Issue whenever possible.
 - Keep GitHub Projects synchronized with the current development status.
 - Avoid creating Markdown TODO files for work that belongs in GitHub Projects.
 - Prefer updating existing Issues instead of creating duplicates.
+
+---
+
+# Development Workflow
+
+Unless explicitly instructed otherwise:
+
+- Every development task should be associated with a GitHub Issue.
+- If no Issue exists, create one before writing any code.
+
+The expected workflow for every new feature is:
+
+1. Create or use an existing GitHub Issue.
+2. Add the Issue to the DevFlix GitHub Project.
+3. Move the Issue to the appropriate project status.
+4. Create a feature branch from `master`.
+5. Implement the requested changes.
+6. Build the solution successfully.
+7. Perform a self-review.
+8. Commit the changes.
+9. Push the feature branch.
+10. Create a Pull Request targeting `master`.
+11. Wait for code review.
+12. Do not merge the Pull Request unless explicitly instructed.
+13. After the Pull Request is merged, update the GitHub Issue and Project status if necessary.
+
+---
+
+# GitHub Context
+
+Known GitHub Project:
+
+- Owner: `Ferchax`
+- Project Number: `1`
+
+When interacting with GitHub Projects:
+
+- Assume the DevFlix GitHub Project is Project #1 owned by `Ferchax`.
+- Prefer the known project context instead of discovering repositories or projects.
+- Only perform discovery if access to the configured repository or project fails.
+- Read project fields before updating custom fields when necessary.
+- Modify only the fields explicitly requested by the user.
+- After updating a Project item, read it again and verify the requested change was successfully applied.
 
 ---
 
@@ -43,6 +97,10 @@ Guidelines:
 - Do not perform large refactorings unless explicitly requested.
 - Prefer incremental improvements over complete rewrites.
 
+Remember this project is currently an MVP.
+
+Choose the simplest implementation that satisfies the requirements.
+
 ---
 
 # Communication
@@ -52,21 +110,81 @@ Guidelines:
 - Explain important architectural decisions before implementing them.
 - Explain trade-offs when multiple valid approaches exist.
 - When suggesting significant changes, explain why they improve the project.
+- Before modifying GitHub Issues or GitHub Projects, explain what will be changed.
+- After completing a GitHub operation, confirm the result.
 
 ---
 
 # Git
 
 - Keep commits focused on a single logical change.
-- Do not create commits unless requested.
-- Do not push changes unless explicitly instructed.
 - Prefer small Pull Requests over large ones.
+- Do not merge Pull Requests unless explicitly instructed.
+
+---
+
+# Git Workflow
+
+For every GitHub Issue or development task:
+
+1. Start from the latest `master` branch.
+2. Create a feature branch using the following naming convention:
+
+   ```
+   feature/<issue-number>-<short-description>
+   ```
+
+   Example:
+
+   ```
+   feature/5-create-category-endpoints
+   ```
+
+3. Perform all development on the feature branch.
+4. Keep the implementation limited to the requested scope.
+5. Avoid unrelated refactoring.
+6. Before finishing, run:
+
+   ```bash
+   dotnet build DevFlix.sln
+   ```
+
+7. Fix any build errors before continuing.
+8. Create focused commits representing a single logical change.
+9. Push the feature branch.
+10. Create a Pull Request targeting `master`.
+11. Include a short Pull Request description summarizing:
+    - What was implemented.
+    - Important design decisions.
+    - Known limitations (if any).
+12. Do not merge the Pull Request unless explicitly instructed.
+
+Never implement new work directly on `master`.
+
+---
+
+# Pull Requests
+
+Before creating a Pull Request:
+
+- Review your own implementation.
+- Remove dead code.
+- Remove commented-out code.
+- Remove unused usings.
+- Ensure naming follows the existing conventions.
+- Ensure the implementation is as simple as possible.
+- Avoid premature abstractions.
+- If multiple implementations are possible, choose the simplest one that satisfies the requirements.
+
+The Pull Request should be ready for human code review.
 
 ---
 
 # Project Structure
 
-- Single project: `DevFlix.Api/`
+Single project:
+
+- `DevFlix.Api/`
   - ASP.NET Core Web API
   - Vue 3 frontend planned for the future.
 
@@ -93,7 +211,11 @@ dotnet build DevFlix.sln
 dotnet run --project DevFlix.Api/DevFlix.Api.csproj
 ```
 
-Swagger: `/swagger`
+Swagger:
+
+```
+/swagger
+```
 
 ## Entity Framework
 
@@ -174,7 +296,9 @@ A task is considered complete when:
 
 - The implementation satisfies the requested requirements.
 - The project builds successfully.
+- A Pull Request has been created (unless explicitly skipped).
 - No unnecessary code was introduced.
 - Existing architecture and conventions are respected.
-- GitHub Issue (if any) is updated.
-- GitHub Project status is updated.
+- GitHub Issue (if any) has been updated.
+- GitHub Project reflects the correct status.
+- GitHub Project updates have been verified after the operation.
