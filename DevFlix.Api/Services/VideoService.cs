@@ -1,85 +1,48 @@
-using DevFlix.Api.Data;
 using DevFlix.Api.DTOs;
 using DevFlix.Api.Entities;
-using Microsoft.EntityFrameworkCore;
+using DevFlix.Api.Repositories;
 
 namespace DevFlix.Api.Services;
 
-public class VideoService(DevFlixDbContext context) : IVideoService
+public class VideoService(IVideoRepository videoRepository, IChannelRepository channelRepository) : IVideoService
 {
-    public async Task<IEnumerable<VideoDto>> GetAllAsync(int? categoryId = null, int? channelId = null)
+    public Task<IEnumerable<VideoDto>> GetAllAsync(int? categoryId = null, int? channelId = null)
     {
-        var query = context.Videos
-            .Include(v => v.Channel)
-            .ThenInclude(c => c!.Category)
-            .AsQueryable();
-
-        if (channelId.HasValue)
-        {
-            query = query.Where(v => v.ChannelId == channelId.Value);
-        }
-
-        if (categoryId.HasValue)
-        {
-            query = query.Where(v => v.Channel!.CategoryId == categoryId.Value);
-        }
-
-        return await query
-            .Select(v => new VideoDto
-            {
-                Id = v.Id,
-                YouTubeVideoId = v.YouTubeVideoId,
-                Title = v.Title,
-                Url = v.Url,
-                ThumbnailUrl = v.ThumbnailUrl,
-                PublishedAt = v.PublishedAt,
-                ChannelId = v.ChannelId,
-                Channel = v.Channel != null ? new ChannelDto
-                {
-                    Id = v.Channel.Id,
-                    Name = v.Channel.Name,
-                    YouTubeChannelId = v.Channel.YouTubeChannelId,
-                    FeedUrl = v.Channel.FeedUrl,
-                    CategoryId = v.Channel.CategoryId,
-                    IsActive = v.Channel.IsActive
-                } : null
-            })
-            .ToListAsync();
+        return videoRepository.GetAllAsync(categoryId, channelId);
     }
 
     public async Task<VideoDto?> GetByIdAsync(int id)
     {
-        var video = await context.Videos
-            .Include(v => v.Channel)
-            .ThenInclude(c => c!.Category)
-            .Where(v => v.Id == id)
-            .Select(v => new VideoDto
-            {
-                Id = v.Id,
-                YouTubeVideoId = v.YouTubeVideoId,
-                Title = v.Title,
-                Url = v.Url,
-                ThumbnailUrl = v.ThumbnailUrl,
-                PublishedAt = v.PublishedAt,
-                ChannelId = v.ChannelId,
-                Channel = v.Channel != null ? new ChannelDto
-                {
-                    Id = v.Channel.Id,
-                    Name = v.Channel.Name,
-                    YouTubeChannelId = v.Channel.YouTubeChannelId,
-                    FeedUrl = v.Channel.FeedUrl,
-                    CategoryId = v.Channel.CategoryId,
-                    IsActive = v.Channel.IsActive
-                } : null
-            })
-            .FirstOrDefaultAsync();
+        var video = await videoRepository.GetByIdAsync(id);
+        if (video is null)
+        {
+            return null;
+        }
 
-        return video;
+        return new VideoDto
+        {
+            Id = video.Id,
+            YouTubeVideoId = video.YouTubeVideoId,
+            Title = video.Title,
+            Url = video.Url,
+            ThumbnailUrl = video.ThumbnailUrl,
+            PublishedAt = video.PublishedAt,
+            ChannelId = video.ChannelId,
+            Channel = video.Channel != null ? new ChannelDto
+            {
+                Id = video.Channel.Id,
+                Name = video.Channel.Name,
+                YouTubeChannelId = video.Channel.YouTubeChannelId,
+                FeedUrl = video.Channel.FeedUrl,
+                CategoryId = video.Channel.CategoryId,
+                IsActive = video.Channel.IsActive
+            } : null
+        };
     }
 
     public async Task<VideoDto> CreateAsync(CreateVideoDto dto)
     {
-        var channel = await context.Channels.FindAsync(dto.ChannelId);
+        var channel = await channelRepository.GetByIdAsync(dto.ChannelId);
         if (channel is null)
         {
             throw new InvalidOperationException($"Channel with ID {dto.ChannelId} not found.");
@@ -95,8 +58,7 @@ public class VideoService(DevFlixDbContext context) : IVideoService
             ChannelId = dto.ChannelId
         };
 
-        context.Videos.Add(video);
-        await context.SaveChangesAsync();
+        await videoRepository.AddAsync(video);
 
         return new VideoDto
         {
@@ -121,13 +83,13 @@ public class VideoService(DevFlixDbContext context) : IVideoService
 
     public async Task<VideoDto?> UpdateAsync(int id, UpdateVideoDto dto)
     {
-        var video = await context.Videos.FindAsync(id);
+        var video = await videoRepository.GetByIdAsync(id);
         if (video is null)
         {
             return null;
         }
 
-        var channel = await context.Channels.FindAsync(dto.ChannelId);
+        var channel = await channelRepository.GetByIdAsync(dto.ChannelId);
         if (channel is null)
         {
             throw new InvalidOperationException($"Channel with ID {dto.ChannelId} not found.");
@@ -139,7 +101,7 @@ public class VideoService(DevFlixDbContext context) : IVideoService
         video.PublishedAt = dto.PublishedAt;
         video.ChannelId = dto.ChannelId;
 
-        await context.SaveChangesAsync();
+        await videoRepository.UpdateAsync(video);
 
         return new VideoDto
         {
@@ -164,14 +126,13 @@ public class VideoService(DevFlixDbContext context) : IVideoService
 
     public async Task<bool> DeleteAsync(int id)
     {
-        var video = await context.Videos.FindAsync(id);
+        var video = await videoRepository.GetByIdAsync(id);
         if (video is null)
         {
             return false;
         }
 
-        context.Videos.Remove(video);
-        await context.SaveChangesAsync();
+        await videoRepository.RemoveAsync(video);
 
         return true;
     }

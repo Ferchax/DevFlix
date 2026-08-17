@@ -1,6 +1,7 @@
 using DevFlix.Api.Data;
 using DevFlix.Api.DTOs;
 using DevFlix.Api.Middleware;
+using DevFlix.Api.Repositories;
 using DevFlix.Api.Services;
 using DevFlix.Api.Validators;
 
@@ -24,6 +25,8 @@ public class Program
         builder.Services.AddDbContext<DevFlixDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+        builder.Services.AddScoped<IVideoRepository, VideoRepository>();
+        builder.Services.AddScoped<IChannelRepository, ChannelRepository>();
         builder.Services.AddScoped<IVideoService, VideoService>();
 
         var app = builder.Build();
