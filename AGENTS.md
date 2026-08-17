@@ -40,6 +40,20 @@ Guidelines:
 - Avoid creating Markdown TODO files for work that belongs in GitHub Projects.
 - Prefer updating existing Issues instead of creating duplicates.
 
+## Project Status Workflow
+
+Use the following status workflow:
+
+- `Backlog` — Issue exists but is not ready to be worked on. Managed manually.
+- `Ready` — Issue is fully defined and ready for implementation. Managed manually.
+- `In progress` — Move the Issue here when implementation begins.
+- `Review` — Move the Issue here after implementation is complete, the solution has been self-reviewed, and the Pull Request has been created.
+- `Done` — Managed manually. The Issue is moved here only after the Pull Request has been reviewed, approved, and merged.
+
+When changes are requested during Pull Request review, keep the Issue in `Review`. After addressing the requested changes, update the existing Pull Request and leave the Issue in `Review` for another review cycle.
+
+The agent must never move an Issue to `Done` automatically.
+
 ---
 
 # Development Workflow
@@ -53,7 +67,7 @@ The expected workflow for every new feature is:
 
 1. Create or use an existing GitHub Issue.
 2. Add the Issue to the DevFlix GitHub Project.
-3. Move the Issue to the appropriate project status.
+3. If implementation is ready to begin, move the Issue to `In progress`.
 4. Create a feature branch from `master`.
 5. Implement the requested changes.
 6. Build the solution successfully.
