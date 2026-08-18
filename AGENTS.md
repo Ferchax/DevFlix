@@ -60,24 +60,24 @@ The agent must never move an Issue to `Done` automatically.
 
 Unless explicitly instructed otherwise:
 
-- Every development task should be associated with a GitHub Issue.
-- If no Issue exists, create one before writing any code.
+- Every development task must reference an existing GitHub Issue.
+- The Issue defines the scope and requirements of the work.
+- The agent must not create new Issues or invent requirements unless explicitly instructed.
 
-The expected workflow for every new feature is:
+The expected workflow for every development task is:
 
-1. Create or use an existing GitHub Issue.
-2. Add the Issue to the DevFlix GitHub Project.
-3. If implementation is ready to begin, move the Issue to `In progress`.
-4. Create a feature branch from `master`.
-5. Implement the requested changes.
-6. Build the solution successfully.
-7. Perform a self-review.
-8. Commit the changes.
-9. Push the feature branch.
-10. Create a Pull Request targeting `master`.
-11. Wait for code review.
-12. Do not merge the Pull Request unless explicitly instructed.
-13. After the Pull Request is merged, update the GitHub Issue and Project status if necessary.
+1. Use the existing GitHub Issue provided for the task.
+2. If the Issue is ready to be implemented, move it to `In progress`.
+3. Create a feature branch from `master`.
+4. Implement the requested changes defined in the Issue.
+5. Build the solution successfully.
+6. Perform a self-review.
+7. Commit the changes.
+8. Push the feature branch.
+9. Create a Pull Request targeting `master`.
+10. Wait for code review.
+11. Do not merge the Pull Request unless explicitly instructed.
+12. After the Pull Request is merged, update the GitHub Issue and Project status if necessary.
 
 ---
 
