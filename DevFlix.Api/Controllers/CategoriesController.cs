@@ -44,15 +44,8 @@ public class CategoriesController(ICategoryService categoryService, IValidator<C
             return ValidationProblem();
         }
 
-        try
-        {
-            var category = await categoryService.CreateAsync(dto);
-            return CreatedAtAction(nameof(GetById), new { id = category.Id }, category);
-        }
-        catch (InvalidOperationException ex)
-        {
-            return Conflict(ex.Message);
-        }
+        var category = await categoryService.CreateAsync(dto);
+        return CreatedAtAction(nameof(GetById), new { id = category.Id }, category);
     }
 
     [HttpPut("{id}")]
@@ -69,40 +62,26 @@ public class CategoriesController(ICategoryService categoryService, IValidator<C
             return ValidationProblem();
         }
 
-        try
-        {
-            var category = await categoryService.UpdateAsync(id, dto);
+        var category = await categoryService.UpdateAsync(id, dto);
 
-            if (category is null)
-            {
-                return NotFound();
-            }
-
-            return Ok(category);
-        }
-        catch (InvalidOperationException ex)
+        if (category is null)
         {
-            return Conflict(ex.Message);
+            return NotFound();
         }
+
+        return Ok(category);
     }
 
     [HttpDelete("{id}")]
     public async Task<ActionResult> Delete(int id)
     {
-        try
-        {
-            var deleted = await categoryService.DeleteAsync(id);
+        var deleted = await categoryService.DeleteAsync(id);
 
-            if (!deleted)
-            {
-                return NotFound();
-            }
-
-            return NoContent();
-        }
-        catch (InvalidOperationException ex)
+        if (!deleted)
         {
-            return Conflict(ex.Message);
+            return NotFound();
         }
+
+        return NoContent();
     }
 }
