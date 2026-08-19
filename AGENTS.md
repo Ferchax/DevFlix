@@ -141,37 +141,61 @@ Choose the simplest implementation that satisfies the requirements.
 
 For every GitHub Issue or development task:
 
-1. Start from the latest `master` branch.
-2. Create a feature branch using the following naming convention:
-
+1. Check the working tree before starting:
+   ```bash
+   git status
    ```
+
+2. If the working tree contains uncommitted changes, stop and ask the user before proceeding.
+
+3. Switch to `master`:
+   ```bash
+   git checkout master
+   ```
+
+4. Update `master` from the remote:
+   ```bash
+   git pull --ff-only origin master
+   ```
+
+5. Create a feature branch using the following naming convention:
+
+   ```bash
    feature/<issue-number>-<short-description>
    ```
 
    Example:
 
-   ```
+   ```bash
    feature/5-create-category-endpoints
    ```
 
-3. Perform all development on the feature branch.
-4. Keep the implementation limited to the requested scope.
-5. Avoid unrelated refactoring.
-6. Before finishing, run:
+6. Perform all development on the feature branch.
+
+7. Keep the implementation limited to the requested scope.
+
+8. Avoid unrelated refactoring.
+
+9. Before finishing, run:
 
    ```bash
    dotnet build DevFlix.sln
    ```
 
-7. Fix any build errors before continuing.
-8. Create focused commits representing a single logical change.
-9. Push the feature branch.
-10. Create a Pull Request targeting `master`.
-11. Include a short Pull Request description summarizing:
+10. Fix any build errors before continuing.
+
+11. Create focused commits representing a single logical change.
+
+12. Push the feature branch.
+
+13. Create a Pull Request targeting `master`.
+
+14. Include a short Pull Request description summarizing:
     - What was implemented.
     - Important design decisions.
     - Known limitations (if any).
-12. Do not merge the Pull Request unless explicitly instructed.
+
+15. Do not merge the Pull Request unless explicitly instructed.
 
 Never implement new work directly on `master`.
 
