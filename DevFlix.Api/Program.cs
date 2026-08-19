@@ -21,6 +21,8 @@ public class Program
         builder.Services.AddScoped<FluentValidation.IValidator<UpdateVideoDto>, Validators.UpdateVideoValidator>();
         builder.Services.AddScoped<FluentValidation.IValidator<CreateChannelDto>, Validators.CreateChannelValidator>();
         builder.Services.AddScoped<FluentValidation.IValidator<UpdateChannelDto>, Validators.UpdateChannelValidator>();
+        builder.Services.AddScoped<FluentValidation.IValidator<CreateCategoryDto>, Validators.CreateCategoryValidator>();
+        builder.Services.AddScoped<FluentValidation.IValidator<UpdateCategoryDto>, Validators.UpdateCategoryValidator>();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
@@ -29,8 +31,10 @@ public class Program
 
         builder.Services.AddScoped<IVideoRepository, VideoRepository>();
         builder.Services.AddScoped<IChannelRepository, ChannelRepository>();
+        builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
         builder.Services.AddScoped<IVideoService, VideoService>();
         builder.Services.AddScoped<IChannelService, ChannelService>();
+        builder.Services.AddScoped<ICategoryService, CategoryService>();
 
         var app = builder.Build();
 
