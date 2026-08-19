@@ -1,9 +1,7 @@
 namespace DevFlix.Api.DTOs;
 
-public class ChannelDto
+public class CreateChannelDto
 {
-    public int Id { get; set; }
-
     public string Name { get; set; } = string.Empty;
 
     public string YouTubeChannelId { get; set; } = string.Empty;
@@ -12,7 +10,5 @@ public class ChannelDto
 
     public int CategoryId { get; set; }
 
-    public bool IsActive { get; set; }
-
-    public CategoryDto? Category { get; set; }
+    public bool IsActive { get; set; } = true;
 }

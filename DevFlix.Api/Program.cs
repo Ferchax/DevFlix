@@ -19,6 +19,8 @@ public class Program
         builder.Services.AddControllers();
         builder.Services.AddScoped<FluentValidation.IValidator<CreateVideoDto>, Validators.CreateVideoValidator>();
         builder.Services.AddScoped<FluentValidation.IValidator<UpdateVideoDto>, Validators.UpdateVideoValidator>();
+        builder.Services.AddScoped<FluentValidation.IValidator<CreateChannelDto>, Validators.CreateChannelValidator>();
+        builder.Services.AddScoped<FluentValidation.IValidator<UpdateChannelDto>, Validators.UpdateChannelValidator>();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
@@ -28,6 +30,7 @@ public class Program
         builder.Services.AddScoped<IVideoRepository, VideoRepository>();
         builder.Services.AddScoped<IChannelRepository, ChannelRepository>();
         builder.Services.AddScoped<IVideoService, VideoService>();
+        builder.Services.AddScoped<IChannelService, ChannelService>();
 
         var app = builder.Build();
 
